@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 const navLinks = [
@@ -13,8 +13,25 @@ export default function Navbar() {
 
   const isActive = (path) => location.pathname === path
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setMenuOpen(false)
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
   return (
-    <nav className="bg-indigo-600 text-white shadow-lg" role="navigation" aria-label="Main navigation">
+    <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2
+                   focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-navy-700
+                   focus:rounded focus:shadow"
+      >
+        Skip to main content
+      </a>
+      <nav className="bg-indigo-600 text-white shadow-lg" role="navigation" aria-label="Main navigation">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
 
@@ -33,7 +50,7 @@ export default function Navbar() {
                 className={`text-sm font-medium transition-colors duration-200 hover:text-teal-400
                   ${isActive(link.path)
                     ? 'text-teal-400 border-b-2 border-teal-400 pb-0.5'
-                    : 'text-gray-300'
+                    : 'text-gray-100'
                   }`}
                 aria-current={isActive(link.path) ? 'page' : undefined}
               >
@@ -44,7 +61,7 @@ export default function Navbar() {
 
           {/* Mobile menu button */}
           <button
-            className="md:hidden p-2 rounded-lg text-gray-300 hover:text-teal-400 
+            className="md:hidden p-2 rounded-lg text-gray-100 hover:text-teal-400 
                        focus:outline-none focus:ring-2 focus:ring-teal-400"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-expanded={menuOpen}
@@ -77,7 +94,7 @@ export default function Navbar() {
               onClick={() => setMenuOpen(false)}
               className={`block py-2 text-sm font-medium transition-colors duration-200
                 hover:text-teal-400
-                ${isActive(link.path) ? 'text-teal-400' : 'text-gray-300'}`}
+                ${isActive(link.path) ? 'text-teal-400' : 'text-gray-100'}`}
               aria-current={isActive(link.path) ? 'page' : undefined}
             >
               {link.label}
@@ -86,5 +103,6 @@ export default function Navbar() {
         </div>
       )}
     </nav>
+    </>
   )
 }

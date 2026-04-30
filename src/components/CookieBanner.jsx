@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 
 export default function CookieBanner() {
   const [visible, setVisible] = useState(() => !localStorage.getItem('fx-cookie-consent'))
+  const acceptRef = useRef(null)
 
   const handleAccept = () => {
     localStorage.setItem('fx-cookie-consent', 'accepted')
@@ -12,6 +14,18 @@ export default function CookieBanner() {
     localStorage.setItem('fx-cookie-consent', 'declined')
     setVisible(false)
   }
+
+  useEffect(() => {
+    acceptRef.current?.focus()
+  }, [])
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') handleDecline()
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   if (!visible) return null
 
@@ -37,10 +51,16 @@ export default function CookieBanner() {
               id="cookie-description"
               className="text-sm text-gray-300 leading-relaxed"
             >
-              We use cookies to remember your preferences (such as your base 
-              currency) and to analyse how the site is used. No personal data 
+              We use cookies to remember your preferences (such as your base
+              currency) and to analyse how the site is used. No personal data
               is collected or shared with third parties. You can opt out at any time.
             </p>
+            <Link
+              to="/privacy"
+              className="text-teal-400 text-sm underline hover:text-teal-300 mt-1 inline-block"
+            >
+              Learn more about our cookie policy
+            </Link>
           </div>
 
           {/* Buttons */}
@@ -53,6 +73,7 @@ export default function CookieBanner() {
               Decline
             </button>
             <button
+              ref={acceptRef}
               onClick={handleAccept}
               className="btn-primary text-sm px-4 py-2"
               aria-label="Accept cookies"

@@ -26,7 +26,12 @@ function friendlyError(err) {
 
 export function FXProvider({ children }) {
   const [baseCurrency, setBaseCurrencyState] = useState(
-    () => localStorage.getItem('fx-base-currency') || 'GBP'
+    () => {
+      const consent = localStorage.getItem('fx-cookie-consent')
+      return consent === 'accepted'
+        ? (localStorage.getItem('fx-base-currency') || 'GBP')
+        : 'GBP'
+    }
   )
   const [rates, setRates] = useState({})
   const [currencies, setCurrencies] = useState([])
@@ -35,17 +40,23 @@ export function FXProvider({ children }) {
   const currenciesLoaded = useRef(false)
 
   const setBaseCurrency = (val) => {
-    localStorage.setItem('fx-base-currency', val)
+    if (localStorage.getItem('fx-cookie-consent') === 'accepted') {
+      localStorage.setItem('fx-base-currency', val)
+    }
     setBaseCurrencyState(val)
   }
 
   // Fetch rates whenever base currency changes; seed currency list on first call
   useEffect(() => {
+    const controller = new AbortController()
+
     async function fetchRates() {
       setLoading(true)
       setError(null)
       try {
-        const res = await fetch(`${BASE_URL}/latest/${baseCurrency}`)
+        const res = await fetch(`${BASE_URL}/latest/${baseCurrency}`, {
+          signal: controller.signal,
+        })
         if (!res.ok) throw new Error('Failed to fetch rates')
         const data = await res.json()
         if (data.result !== 'success') throw new Error(data['error-type'])
@@ -62,12 +73,14 @@ export function FXProvider({ children }) {
         const { [baseCurrency]: _, ...filteredRates } = data.conversion_rates
         setRates(filteredRates)
       } catch (err) {
-        setError(friendlyError(err))
+        if (err.name !== 'AbortError') setError(friendlyError(err))
       } finally {
-        setLoading(false)
+        if (!controller.signal.aborted) setLoading(false)
       }
     }
+
     fetchRates()
+    return () => controller.abort()
   }, [baseCurrency])
 
   return (

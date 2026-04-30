@@ -4,7 +4,7 @@ import CurrencySelector from '../components/CurrencySelector'
 import ErrorBanner from '../components/ErrorBanner'
 
 function SortIcon({ col, sortConfig }) {
-  if (sortConfig.key !== col) return <span className="text-gray-400 ml-1">↕</span>
+  if (sortConfig.key !== col) return <span className="text-gray-100 ml-1">↕</span>
   return (
     <span className="text-teal-400 ml-1">
       {sortConfig.direction === 'asc' ? '↑' : '↓'}
@@ -85,7 +85,6 @@ export default function RatesTable() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="input-field"
-              aria-label="Search for a currency"
             />
           </div>
 
@@ -139,10 +138,17 @@ export default function RatesTable() {
           >
             <thead>
               <tr className="bg-indigo-600 text-white">
-                <th
+                <th scope="col"
                   className="px-6 py-4 text-left font-semibold cursor-pointer
                              hover:text-teal-400 transition-colors"
                   onClick={() => handleSort('code')}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      if (e.key === ' ') e.preventDefault()
+                      handleSort('code')
+                    }
+                  }}
+                  tabIndex={0}
                   aria-sort={
                     sortConfig.key === 'code'
                       ? sortConfig.direction === 'asc'
@@ -153,10 +159,17 @@ export default function RatesTable() {
                 >
                   Code <SortIcon col="code" sortConfig={sortConfig} />
                 </th>
-                <th
+                <th scope="col"
                   className="px-6 py-4 text-left font-semibold cursor-pointer
                              hover:text-teal-400 transition-colors"
                   onClick={() => handleSort('name')}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      if (e.key === ' ') e.preventDefault()
+                      handleSort('name')
+                    }
+                  }}
+                  tabIndex={0}
                   aria-sort={
                     sortConfig.key === 'name'
                       ? sortConfig.direction === 'asc'
@@ -167,10 +180,17 @@ export default function RatesTable() {
                 >
                   Currency <SortIcon col="name" sortConfig={sortConfig} />
                 </th>
-                <th
+                <th scope="col"
                   className="px-6 py-4 text-right font-semibold cursor-pointer
                              hover:text-teal-400 transition-colors"
                   onClick={() => handleSort('rate')}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      if (e.key === ' ') e.preventDefault()
+                      handleSort('rate')
+                    }
+                  }}
+                  tabIndex={0}
                   aria-sort={
                     sortConfig.key === 'rate'
                       ? sortConfig.direction === 'asc'
@@ -188,7 +208,7 @@ export default function RatesTable() {
                 <tr>
                   <td
                     colSpan={3}
-                    className="px-6 py-8 text-center text-gray-400"
+                    className="px-6 py-8 text-center text-gray-600"
                   >
                     No currencies found matching your search.
                   </td>

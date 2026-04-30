@@ -177,7 +177,6 @@ export default function Converter() {
               type="submit"
               className="btn-primary flex-1"
               disabled={loading}
-              aria-disabled={loading}
             >
               {loading ? 'Loading rates...' : 'Convert'}
             </button>
@@ -201,17 +200,17 @@ export default function Converter() {
           aria-label="Conversion result"
           aria-live="polite"
         >
-          <p className="text-gray-300 text-sm mb-2">Conversion Result</p>
+          <p className="text-gray-100 text-sm mb-2">Conversion Result</p>
           <p className="text-4xl font-bold text-teal-400 mb-2">
             {converted.result.toLocaleString()} {converted.to}
           </p>
-          <p className="text-gray-300 text-lg">
+          <p className="text-gray-100 text-lg">
             {converted.amount.toLocaleString()} {converted.from}
             {' = '}
             {converted.result.toLocaleString()} {converted.to}
           </p>
-          <div className="border-t border-indigo-500 mt-4 pt-4 text-sm text-gray-400">
-            <p>Rate: 1 {converted.from} = {converted.rate} {converted.to}</p>
+          <div className="border-t border-indigo-500 mt-4 pt-4 text-sm text-gray-100">
+            <p>Rate: 1 {converted.from} = {converted.rate.toFixed(4)} {converted.to}</p>
             <p className="mt-1">
                 Rates from ExchangeRate-API · Updated daily
             </p>

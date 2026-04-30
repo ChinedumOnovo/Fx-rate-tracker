@@ -95,7 +95,7 @@ export default function Landing() {
               Track FX Rates <br />
               <span className="text-teal-400">Instantly</span>
             </h1>
-            <p className="text-gray-300 text-lg mb-8 leading-relaxed
+            <p className="text-gray-100 text-lg mb-8 leading-relaxed
                           animate-fade-in-up [animation-delay:200ms]">
               Real-time exchange rates powered by ExchangeRate-API.
               Convert currencies, explore currency info, and track the pairs
@@ -167,7 +167,6 @@ export default function Landing() {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 className="input-field"
-                aria-label="Amount to convert"
               />
             </div>
 
@@ -339,7 +338,7 @@ export default function Landing() {
                 <h3 className="text-teal-400 font-bold text-lg mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-gray-300 text-sm leading-relaxed">
+                <p className="text-gray-100 text-sm leading-relaxed">
                   {feature.desc}
                 </p>
               </Link>

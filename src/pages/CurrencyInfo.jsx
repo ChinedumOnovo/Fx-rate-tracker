@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useFX } from '../context/FXContext'
 import ErrorBanner from '../components/ErrorBanner'
@@ -177,6 +177,11 @@ export default function CurrencyInfo() {
   const { baseCurrency, rates, currencies, loading, error } = useFX()
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState(location.state?.selected ?? null)
+  const panelRef = useRef(null)
+
+  useEffect(() => {
+    if (selected !== null) panelRef.current?.focus()
+  }, [selected])
 
   const filtered = useMemo(() => {
     const query = search.toLowerCase()
@@ -228,7 +233,6 @@ export default function CurrencyInfo() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="input-field"
-              aria-label="Search for a currency"
             />
           </div>
           {search && (
@@ -244,7 +248,7 @@ export default function CurrencyInfo() {
           )}
         </div>
 
-        <p className="text-xs text-gray-400 mt-3" aria-live="polite">
+        <p className="text-xs text-gray-600 mt-3" aria-live="polite">
           Showing {filtered.length} of {currencies.length} currencies
           {search && ` matching "${search}"`}
         </p>
@@ -265,6 +269,9 @@ export default function CurrencyInfo() {
           {/* Detail panel — above grid on mobile, sticky right column on lg+ */}
           {selectedCurrency && (
             <div
+              ref={panelRef}
+              id="currency-detail-panel"
+              tabIndex={-1}
               className="card mb-6 border-2 border-teal-400
                          lg:mb-0 lg:order-2 lg:w-72 lg:shrink-0 lg:sticky lg:top-6"
               aria-label={`Details for ${selected}`}
@@ -365,6 +372,7 @@ export default function CurrencyInfo() {
                   role="button"
                   tabIndex={0}
                   aria-expanded={isSelected}
+                  aria-controls="currency-detail-panel"
                   aria-label={`${currency.code} — ${meta.country}`}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') handleSelect(currency.code)
